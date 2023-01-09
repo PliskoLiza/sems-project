@@ -1,8 +1,7 @@
 from typing import Any, Dict
 
-from model._FloorController_ import FloorController
-from model._Floor_ import Floor
 from model._IdFactory_ import IdFactory
+from model._FloorController_ import FloorController
 from model._ModelConfiguration_ import ModelConfiguration
 
 
@@ -18,7 +17,7 @@ class FloorControllersFactory:
         self._id_factory_ = configuration.floor_controllers_id_factory
         self._receivers_factory_ = configuration.call_receivers_factory
 
-    def get_controllers_for(self, floor: Floor) -> Dict[Any, FloorController]:
+    def get_controllers_for(self, floor: int) -> Dict[Any, FloorController]:
         controllers = dict()
         for receiver in self._receivers_factory_.get_receivers_for(floor):
             controller_id = self._id_factory_.new_id()

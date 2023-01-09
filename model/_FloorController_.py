@@ -1,5 +1,4 @@
 from ._Call_ import Call
-from ._Floor_ import Floor
 from ._CallReceiver_ import CallReceiver
 
 
@@ -14,10 +13,10 @@ class FloorController:
         return hash(self.controller_id)
 
     state = None
-    floor: Floor = None
+    floor: int = None
     receiver: CallReceiver = None
 
-    def __init__(self, controller_id, *, floor: Floor, receiver: CallReceiver):
+    def __init__(self, controller_id, *, floor: int, receiver: CallReceiver):
         self.controller_id = controller_id
         self.receiver = receiver
         self.floor = floor
@@ -29,7 +28,7 @@ class FloorController:
         if self.active():
             return self.state == new_state
         self.state = new_state
-        self.receiver.push_call(Call(sender_id=self.controller_id, floor=self.floor.number, flag=self.state))
+        self.receiver.push_call(Call(sender_id=self.controller_id, floor=self.floor, flag=self.state))
         return True
 
     def drop_state(self):

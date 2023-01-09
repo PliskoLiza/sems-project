@@ -44,7 +44,7 @@ class Floor:
         self.queue = deque()
         self.number = number
         self.configure(configuration)
-        self.controllers = controllers_factory.get_controllers_for(self)
+        self.controllers = controllers_factory.get_controllers_for(self.number)
 
     def configure(self, configuration: ModelConfiguration):
         self.flagging_provider = configuration.flagging_provider
