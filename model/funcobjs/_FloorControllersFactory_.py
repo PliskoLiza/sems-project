@@ -1,8 +1,8 @@
 from typing import Any, Dict
 
-from model._IdFactory_ import IdFactory
-from model._FloorController_ import FloorController
-from model._ModelConfiguration_ import ModelConfiguration
+from .. import ModelConfiguration
+from .. import IdFactory
+from . import FloorController
 
 
 class FloorControllersFactory:

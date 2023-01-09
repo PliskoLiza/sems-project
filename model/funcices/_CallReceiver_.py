@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from ._Call_ import Call
+from .. import Call
 
 
 class CallReceiver:

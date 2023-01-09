@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Iterable
 
-from model._CallReceiver_ import CallReceiver
+from . import CallReceiver
 
 
 class CallReceiversFactory:

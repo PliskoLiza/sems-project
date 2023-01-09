@@ -1,13 +1,10 @@
 from collections import deque
 from typing import Dict, Any, Iterable
 
-from ._FlaggingProvider_ import FlaggingProvider
-from ._FloorController_ import FloorController
-from ._FloorControllersFactory_ import FloorControllersFactory
-from ._ModelConfiguration_ import ModelConfiguration
-from ._PassengerStates_ import PassengerStates
-from ._Passenger_ import Passenger
-from ._Waiter_ import Waiter
+from .. import ModelConfiguration
+from .. import FlaggingProvider
+from .. import PassengerStates, Passenger, Waiter
+from . import FloorController, FloorControllersFactory
 
 
 class Floor:

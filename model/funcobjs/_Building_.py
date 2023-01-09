@@ -1,9 +1,8 @@
 from typing import List
 
-from ._FloorControllersFactory_ import FloorControllersFactory
-from ._ModelConfiguration_ import ModelConfiguration
-from ._Passenger_ import Passenger
-from ._Floor_ import Floor
+from .. import ModelConfiguration
+from .. import Passenger
+from . import Floor, FloorControllersFactory
 
 
 class Building:

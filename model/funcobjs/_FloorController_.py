@@ -1,5 +1,4 @@
-from ._Call_ import Call
-from ._CallReceiver_ import CallReceiver
+from .. import Call, CallReceiver
 
 
 class FloorController:

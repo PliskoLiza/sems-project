@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Iterable
 
-from ._Ticket_ import Ticket
+from .. import Ticket
 
 
 class FlaggingProvider:

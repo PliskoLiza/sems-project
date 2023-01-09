@@ -1,4 +1,4 @@
-from model._IdFactory_ import IdFactory
+from . import IdFactory
 
 
 class IntIdFactory(IdFactory):

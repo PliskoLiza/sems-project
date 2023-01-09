@@ -1,4 +1,4 @@
-from model._Passenger_ import Passenger
+from . import Passenger
 
 
 class Waiter:

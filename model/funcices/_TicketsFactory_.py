@@ -1,7 +1,7 @@
 from typing import Iterable
 from abc import abstractmethod
 
-from ._Ticket_ import Ticket
+from .. import Ticket
 
 
 class TicketsFactory:

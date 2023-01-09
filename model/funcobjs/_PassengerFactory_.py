@@ -1,7 +1,6 @@
-from ._ModelConfiguration_ import ModelConfiguration
-from ._IdFactory_ import IdFactory
-from ._Passenger_ import Passenger
-from ._Ticket_ import Ticket
+from .. import ModelConfiguration
+from .. import IdFactory
+from .. import Ticket, Passenger
 
 
 class PassengersFactory:

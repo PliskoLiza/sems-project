@@ -1,6 +1,6 @@
 from typing import Any
 
-from model._TimeCounter_ import TimeCounter
+from . import TimeCounter
 
 
 class SimpleTimeCounter(TimeCounter):

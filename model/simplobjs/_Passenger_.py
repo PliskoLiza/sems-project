@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
-from ._PassengerStates_ import PassengerStates
-from ._Ticket_ import Ticket
+from . import PassengerStates, Ticket
 
 
 class Passenger:

@@ -1,10 +1,6 @@
-from ._IdFactory_ import IdFactory
-from ._IntIdFactory_ import IntIdFactory
-from ._FlaggingProvider_ import FlaggingProvider
-from ._CallReceiversFactory_ import CallReceiversFactory
-from ._SimpleTimeCounter_ import SimpleTimeCounter
-from ._TicketsFactory_ import TicketsFactory
-from ._TimeCounter_ import TimeCounter
+from . import IdFactory, IntIdFactory
+from . import TimeCounter, SimpleTimeCounter
+from . import FlaggingProvider, CallReceiversFactory, TicketsFactory
 
 
 class ModelConfiguration:

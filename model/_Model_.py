@@ -1,10 +1,8 @@
 from typing import Iterable
 
-from ._Building_ import Building
-from ._ModelConfiguration_ import ModelConfiguration
-from ._PassengerFactory_ import PassengersFactory
-from ._TicketsFactory_ import TicketsFactory
-from ._TimeCounter_ import TimeCounter
+from . import ModelConfiguration
+from . import TimeCounter, TicketsFactory
+from . import Building, PassengersFactory
 
 
 class Model:
