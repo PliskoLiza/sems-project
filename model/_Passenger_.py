@@ -1,4 +1,4 @@
-from typing import List, Tuple, Any, Dict
+from typing import Any, Dict
 
 from ._PassengerStates_ import PassengerStates
 from ._Ticket_ import Ticket

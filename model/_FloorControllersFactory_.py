@@ -16,7 +16,7 @@ class FloorControllersFactory:
 
     def configure(self, configuration: ModelConfiguration):
         self._id_factory_ = configuration.floor_controllers_id_factory
-        self._receivers_factory_ = configuration.receivers_factory
+        self._receivers_factory_ = configuration.call_receivers_factory
 
     def get_controllers_for(self, floor: Floor) -> Dict[Any, FloorController]:
         controllers = dict()
