@@ -1,5 +1,5 @@
-from collections import deque
-from typing import Dict, Any, Iterable
+from linklst import LinkedList
+from typing import Dict, Any, Iterable, Union
 
 from .. import ModelConfiguration
 from .. import FlaggingProvider
@@ -8,7 +8,6 @@ from . import FloorController, FloorControllersFactory
 
 
 class Floor:
-
     number: int = None
 
     def __eq__(self, other):
@@ -17,28 +16,30 @@ class Floor:
     def __hash__(self):
         return hash(self.number)
 
-    queue: deque = None
+    queue: LinkedList = None
     controllers: Dict[Any, FloorController] = None
 
     def has_inactive_controllers(self):
-        return any(map(self.controllers.values(), lambda ctrl: not ctrl.active()))
+        return any(map(self.controllers.values(), lambda controller: not controller.active()))
 
     def inactive_controllers(self):
-        return filter(self.controllers.values(), lambda ctrl: not ctrl.active())
+        return filter(self.controllers.values(), lambda controller: not controller.active())
 
     def has_controllers_with_state(self, state: PassengerStates):
-        return any(map(self.controllers.values(), lambda ctrl: ctrl.state == state))
+        return any(map(self.controllers.values(), lambda controller: controller.state == state))
 
     def controllers_with_state(self, state: PassengerStates):
-        return filter(self.controllers.values(), lambda ctrl: ctrl.state == state)
+        return filter(self.controllers.values(), lambda controller: controller.state == state)
 
-    def waiters_with_flag(self, flag):
-        return filter(self.queue, lambda waiter: waiter.flag == flag)
+    def waiters_with_flag(self, flag, *, unwrap=True) -> Iterable[Union[Waiter, LinkedList.Element]]:
+        return filter(self.queue.iterate(unwrap=unwrap),
+                      (lambda waiter: waiter.flag == flag) if unwrap
+                      else (lambda waiter: waiter.value.flag == flag))
 
     flagging_provider: FlaggingProvider = None
 
     def __init__(self, number, *, controllers_factory: FloorControllersFactory, configuration: ModelConfiguration):
-        self.queue = deque()
+        self.queue = LinkedList()
         self.number = number
         self.configure(configuration)
         self.controllers = controllers_factory.get_controllers_for(self.number)
@@ -54,7 +55,12 @@ class Floor:
 
     def pickup_passengers(self, flag, maximum_count, *, caller_id=None) -> Iterable[Passenger]:
         counter = 0
-        # Add logic for deleting waiters and returning passengers
+        for waiter_element in self.waiters_with_flag(flag=flag, unwrap=False):
+            counter += 1
+            if counter <= maximum_count:
+                yield waiter_element.truncate()
+            else:
+                break
         self.drop_controllers(flag, controller_id=caller_id)
 
     def drop_controllers(self, flag, *, controller_id=None):
