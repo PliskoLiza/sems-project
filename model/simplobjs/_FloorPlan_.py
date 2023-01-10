@@ -2,6 +2,5 @@ class FloorPlan:
 
     height: float = None
 
-    def __init__(self, number: int, *, height: float = None):
-        self.number = number
+    def __init__(self, *, height: float = None):
         self.height = height

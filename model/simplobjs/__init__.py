@@ -1,5 +1,7 @@
 from ._Call_ import Call
 from ._Ticket_ import Ticket
+from ._Command_ import Command
+from ._Request_ import Request
 from ._FloorPlan_ import FloorPlan
 from ._LiftCabinPosition_ import LiftCabinPosition
 from ._LiftCabinSpecific_ import LiftCabinSpecific

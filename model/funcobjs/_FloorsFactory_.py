@@ -1,8 +1,6 @@
-from typing import Dict
-
 from .. import ModelConfiguration, ModelConfigurableObject
 from .. import FloorPlansFactory, FlaggingProvider
-from . import Floor, FloorControllersFactory
+from . import Floor, Floors, FloorControllersFactory
 
 
 class FloorsFactory(ModelConfigurableObject):
@@ -19,12 +17,12 @@ class FloorsFactory(ModelConfigurableObject):
         self._floor_plans_factory_ = configuration.floor_plans_factory
         self._controllers_factory_ = FloorControllersFactory(configuration=configuration)
 
-    def get_floors(self) -> Dict[int, Floor]:
-        floors = list()
-        number = 0
-        for plan in self._floor_plans_factory_.get_floor_plans():
-            number += 1
-            floors.append(Floor(number, plan=plan, flagging_provider=self._flagging_provider_,
-                                controllers=self._controllers_factory_.get_controllers_for(number)))
-        return floors
-
+    def get_floors(self) -> Floors:
+        plans = self._floor_plans_factory_.get_floor_plans()
+        start_number = self._floor_plans_factory_.get_first_floor_number()
+        return Floors([Floor(i + start_number,
+                             plan=plans[i],
+                             flagging_provider=self._flagging_provider_,
+                             controllers=self._controllers_factory_.get_controllers_for(i + start_number))
+                       for i in range(0, self._floor_plans_factory_.get_floors_count())],
+                      start_number=start_number)

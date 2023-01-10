@@ -22,6 +22,16 @@ class LinkedList(Iterable):
                 self.following.follows = self.follows
             return self.value
 
+        def insert_following(self, value):
+            new = LinkedList.Element(value, self, self.following)
+            self.following.follows = new
+            self.following = new
+
+        def insert_follows(self, value):
+            new = LinkedList.Element(value, self.follows, self)
+            self.follows.following = new
+            self.follows = new
+
         def __eq__(self, other):
             return isinstance(other, self.__class__) and self.value == other.value
 
@@ -48,7 +58,10 @@ class LinkedList(Iterable):
         return counter
 
     def get(self, index: int):
-        if index == 0:
+        if self.isEmpty():
+            raise IndexError()
+
+        elif index == 0:
             return self.head
 
         elif index > 0:
@@ -78,7 +91,7 @@ class LinkedList(Iterable):
             return current
 
     def __getitem__(self, item):
-        if not type(item) is int or self.head is None:
+        if not type(item) is int:
             raise IndexError()
         return self.get(item).value
 
@@ -91,7 +104,7 @@ class LinkedList(Iterable):
         return self.iterate()
 
     def iterate(self, *, unwrap=True) -> Iterator[Element]:
-        if self.head is not None:
+        if not self.isEmpty():
             current = self.head
             while current is not None:
                 yield current.value if unwrap else current
@@ -111,7 +124,7 @@ class LinkedList(Iterable):
         return string
 
     def appendleft(self, item):
-        if self.head is None:
+        if self.isEmpty():
             self.head = self.Element(item, None, None)
             self.tail = self.head
 
@@ -124,7 +137,7 @@ class LinkedList(Iterable):
                 self.tail.following = self.head
 
     def append(self, item):
-        if self.tail is None:
+        if self.isEmpty():
             self.tail = self.Element(item, None, None)
             self.head = self.tail
 
@@ -134,6 +147,9 @@ class LinkedList(Iterable):
             self.tail = new
             if self.head.follows is None:
                 self.head.follows = new
+
+    def isEmpty(self):
+        return self.head is None
 
     # noinspection DuplicatedCode
     def popleft(self):
@@ -164,3 +180,13 @@ class LinkedList(Iterable):
 
         self.tail = buffer.following
         return buffer.value()
+
+    def first(self):
+        if self.isEmpty():
+            raise ValueError()
+        return self.head.value
+
+    def last(self):
+        if self.isEmpty():
+            raise ValueError()
+        return self.tail.value

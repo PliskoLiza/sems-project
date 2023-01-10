@@ -1,5 +1,5 @@
+from typing import List
 from abc import abstractmethod
-from typing import Iterable
 
 from .. import FloorPlan
 
@@ -11,5 +11,9 @@ class FloorPlansFactory:
         pass
 
     @abstractmethod
-    def get_floor_plans(self) -> Iterable[FloorPlan]:
+    def get_first_floor_number(self) -> int:
+        pass
+
+    @abstractmethod
+    def get_floor_plans(self) -> List[FloorPlan]:
         pass

@@ -1,11 +1,11 @@
 from typing import Iterable
 
-from . import ModelConfiguration, ModelConfigurableObject
+from . import ModelConfiguration, ModelConfigurableObject, ModelLiveObject
 from . import TimeCounter, TicketsFactory
 from . import Building, PassengersFactory
 
 
-class Model(ModelConfigurableObject):
+class Model(ModelLiveObject, ModelConfigurableObject):
 
     building: Building = None
 
@@ -26,11 +26,15 @@ class Model(ModelConfigurableObject):
     def time(self):
         return self.time_counter.current()
 
-    def tick(self):
-        self.time_counter.tick()
+    def tick(self, time):
         for ticket in self.tickets_factory.generate_tickets(self.time()):
             self.building.push_passenger(self.time(), self.passengers_factory.spawn_passenger(ticket))
+        self.building.tick(time)
+
+    def run_tick(self):
+        self.time_counter.tick()
+        self.tick(self.time())
 
     def run(self, condition) -> Iterable:
         while condition(self):
-            self.tick()
+            self.run_tick()

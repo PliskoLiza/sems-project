@@ -1,10 +1,9 @@
 from linklst import LinkedList
 from typing import Dict, Any, Iterable, Union
 
-from .. import ModelConfiguration
 from .. import FlaggingProvider
 from .. import PassengerStates, Passenger, Waiter, FloorPlan
-from . import FloorController, FloorControllersFactory
+from . import FloorController
 
 
 class Floor:
@@ -52,7 +51,7 @@ class Floor:
         self.flagging_provider = flagging_provider
 
     def push_passenger(self, time, passenger: Passenger):
-        passenger.try_update_state(time, PassengerStates.WAITING_AT_FLOOR)
+        passenger.try_update_state(time, PassengerStates.WAITING)
         waiter = Waiter(passenger, self.flagging_provider.get_flag_for(passenger.ticket))
         self.queue.appendleft(waiter)
         self.try_register_waiter(waiter)
