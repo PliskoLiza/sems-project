@@ -1,5 +1,6 @@
 from ._PassengerFactory_ import PassengersFactory
 from ._FloorController_ import FloorController
+from ._FloorControllers_ import FloorControllers
 from ._FloorControllersFactory_ import FloorControllersFactory
 from ._Floor_ import Floor
 from ._Floors_ import Floors

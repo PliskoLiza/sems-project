@@ -24,7 +24,7 @@ class LiftCabinsFactory(ModelConfigurableObject):
         self._cabin_positions_factory_ = configuration.lift_cabin_positions_factory
 
     def create_lift_cabins(self) -> Dict[Any, LiftCabin]:
-        receivers = self._request_receivers_factory_.get_receivers()
+        receivers = self._request_receivers_factory_.get_request_receivers()
         specifics = self._cabin_specifics_factory_.get_cabins_specifics()
         positions = self._cabin_positions_factory_.get_cabins_positions()
         return {key: LiftCabin(key,

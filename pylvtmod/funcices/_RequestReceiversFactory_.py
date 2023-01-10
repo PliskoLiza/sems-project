@@ -7,5 +7,5 @@ from . import RequestReceiver
 class RequestReceiversFactory:
 
     @abstractmethod
-    def get_receivers(self) -> Dict[Any, RequestReceiver]:
+    def get_request_receivers(self) -> Dict[Any, RequestReceiver]:
         pass

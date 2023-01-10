@@ -1,0 +1,1 @@
+from ._SimpleModelConfigurator_ import SimpleModelConfigurator

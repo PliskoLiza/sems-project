@@ -26,6 +26,10 @@ class Model(ModelLiveObject, ModelConfigurableObject):
     def time(self):
         return self.time_counter.current()
 
+    def run(self, condition) -> Iterable:
+        while condition(self):
+            self.run_tick()
+
     def tick(self, time):
         for ticket in self.tickets_factory.generate_tickets(self.time()):
             self.building.push_passenger(self.time(), self.passengers_factory.spawn_passenger(ticket))
@@ -34,7 +38,3 @@ class Model(ModelLiveObject, ModelConfigurableObject):
     def run_tick(self):
         self.time_counter.tick()
         self.tick(self.time())
-
-    def run(self, condition) -> Iterable:
-        while condition(self):
-            self.run_tick()
