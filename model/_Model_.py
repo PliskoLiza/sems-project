@@ -1,11 +1,11 @@
 from typing import Iterable
 
-from . import ModelConfiguration
+from . import ModelConfiguration, ModelConfigurableObject
 from . import TimeCounter, TicketsFactory
 from . import Building, PassengersFactory
 
 
-class Model:
+class Model(ModelConfigurableObject):
 
     building: Building = None
 
@@ -14,8 +14,8 @@ class Model:
     tickets_factory: TicketsFactory = None
     passengers_factory: PassengersFactory = None
 
-    def __init__(self, *, configuration: ModelConfiguration):
-        self.configure(configuration)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def configure(self, configuration: ModelConfiguration):
         self.building = Building(configuration=configuration)
@@ -28,7 +28,7 @@ class Model:
 
     def tick(self):
         self.time_counter.tick()
-        for ticket in self.tickets_factory.tick_tickets(self.time()):
+        for ticket in self.tickets_factory.generate_tickets(self.time()):
             self.building.push_passenger(self.time(), self.passengers_factory.spawn_passenger(ticket))
 
     def run(self, condition) -> Iterable:

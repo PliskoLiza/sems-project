@@ -1,17 +1,17 @@
 from typing import Any, Dict
 
-from .. import ModelConfiguration
-from .. import IdFactory
+from .. import ModelConfiguration,ModelConfigurableObject
+from .. import IdFactory, FloorPlan
 from . import FloorController
 
 
-class FloorControllersFactory:
+class FloorControllersFactory(ModelConfigurableObject):
 
     _receivers_factory_ = None
     _id_factory_: IdFactory = None
 
-    def __init__(self, *, configuration: ModelConfiguration):
-        self.configure(configuration)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def configure(self, configuration: ModelConfiguration):
         self._id_factory_ = configuration.floor_controllers_id_factory

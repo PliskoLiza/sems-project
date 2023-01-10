@@ -1,23 +1,30 @@
-from typing import List
+from typing import List, Dict, Any
 
-from .. import ModelConfiguration
+from .. import ModelConfiguration, ModelConfigurableObject, ModelLiveObject
 from .. import Passenger
-from . import Floor, FloorControllersFactory
+from . import Floor, LiftCabin, FloorsFactory, LiftCabinsFactory
 
 
-class Building:
+class Building(ModelConfigurableObject, ModelLiveObject):
 
-    floors_count: int = None
     floors: List[Floor] = None
+    lifts: Dict[Any, LiftCabin] = None
 
-    def __init__(self, *, configuration: ModelConfiguration):
-        self.configure(configuration)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def configure(self, configuration: ModelConfiguration):
-        self.floors_count = configuration.floors_count
-        controllers_factory = FloorControllersFactory(configuration=configuration)
-        self.floors = [Floor(i, configuration=configuration, controllers_factory=controllers_factory)
-                       for i in range(1, configuration.floors_count + 1)]
+        self.floors = FloorsFactory(configuration=configuration).get_floors()
+        self.lifts = LiftCabinsFactory(configuration=configuration).create_lift_cabins()
+
+    def floor(self, number: int):
+        return self.floors[number - 1]
+
+    def floors_count(self):
+        return len(self.floors)
 
     def push_passenger(self, time, passenger: Passenger):
-        self.floors[passenger.ticket.departure_floor].push_passenger(time, passenger)
+        self.floor(passenger.ticket.departure_floor).push_passenger(time, passenger)
+
+    def tick(self, time):
+        pass

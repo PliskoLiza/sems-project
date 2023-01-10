@@ -7,5 +7,5 @@ from .. import Ticket
 class TicketsFactory:
 
     @abstractmethod
-    def tick_tickets(self, time) -> Iterable[Ticket]:
+    def generate_tickets(self, time) -> Iterable[Ticket]:
         pass

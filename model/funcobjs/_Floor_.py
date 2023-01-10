@@ -3,12 +3,14 @@ from typing import Dict, Any, Iterable, Union
 
 from .. import ModelConfiguration
 from .. import FlaggingProvider
-from .. import PassengerStates, Passenger, Waiter
+from .. import PassengerStates, Passenger, Waiter, FloorPlan
 from . import FloorController, FloorControllersFactory
 
 
 class Floor:
+
     number: int = None
+    plan: FloorPlan = None
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and other.number == self.number
@@ -38,14 +40,16 @@ class Floor:
 
     flagging_provider: FlaggingProvider = None
 
-    def __init__(self, number, *, controllers_factory: FloorControllersFactory, configuration: ModelConfiguration):
-        self.queue = LinkedList()
-        self.number = number
-        self.configure(configuration)
-        self.controllers = controllers_factory.get_controllers_for(self.number)
+    def __init__(self, number: int, *,
+                 plan: FloorPlan,
+                 controllers: Dict[Any, FloorController],
+                 flagging_provider: FlaggingProvider):
 
-    def configure(self, configuration: ModelConfiguration):
-        self.flagging_provider = configuration.flagging_provider
+        self.number = number
+        self.plan = plan
+        self.queue = LinkedList()
+        self.controllers = controllers
+        self.flagging_provider = flagging_provider
 
     def push_passenger(self, time, passenger: Passenger):
         passenger.try_update_state(time, PassengerStates.WAITING_AT_FLOOR)
