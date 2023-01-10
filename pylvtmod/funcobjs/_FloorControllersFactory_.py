@@ -1,9 +1,9 @@
-from .. import ModelConfiguration, ModelConfigurableObject
+from .. import ModelConfiguration, ModelPreConfigurableObject
 from .. import IdFactory
 from . import FloorController, FloorControllers
 
 
-class FloorControllersFactory(ModelConfigurableObject):
+class FloorControllersFactory(ModelPreConfigurableObject):
 
     _receivers_factory_ = None
     _id_factory_: IdFactory = None

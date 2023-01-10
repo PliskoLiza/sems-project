@@ -8,16 +8,16 @@ class FloorControllers:
     _controllers_: Dict[Any, FloorController] = None
 
     def all_active(self) -> bool:
-        return all(map(self._controllers_.values(), lambda controller: not controller.active()))
+        return all(map(lambda controller: not controller.active(), self._controllers_.values()))
 
     def inactive(self) -> Iterable[FloorController]:
-        return filter(self._controllers_.values(), lambda controller: not controller.active())
+        return filter(lambda controller: not controller.active(), self._controllers_.values())
 
     def state_exists(self, state) -> bool:
-        return any(map(self._controllers_.values(), lambda controller: controller.state == state))
+        return any(map(lambda controller: controller.state == state, self._controllers_.values()))
 
     def with_state(self, state) -> Iterable[FloorController]:
-        return filter(self._controllers_.values(), lambda controller: controller.state == state)
+        return filter(lambda controller: controller.state == state, self._controllers_.values())
 
     def __init__(self, controllers: Dict[Any, FloorController]):
         self._controllers_ = controllers

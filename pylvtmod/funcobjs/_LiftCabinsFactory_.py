@@ -1,11 +1,11 @@
 from typing import Dict, Any
 
-from .. import ModelConfiguration, ModelConfigurableObject
+from .. import ModelConfiguration, ModelPreConfigurableObject
 from .. import LiftCabinSpecificsFactory, LiftCabinPositionsFactory, RequestReceiversFactory
 from . import Floor, Floors, LiftCabin
 
 
-class LiftCabinsFactory(ModelConfigurableObject):
+class LiftCabinsFactory(ModelPreConfigurableObject):
 
     _floors_: Dict[int, Floor] = None
 

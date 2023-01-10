@@ -1,9 +1,9 @@
-from .. import ModelConfiguration, ModelConfigurableObject
+from .. import ModelConfiguration, ModelPreConfigurableObject
 from .. import FloorPlansFactory, FlaggingProvider
 from . import Floor, Floors, FloorControllersFactory
 
 
-class FloorsFactory(ModelConfigurableObject):
+class FloorsFactory(ModelPreConfigurableObject):
 
     _flagging_provider_: FlaggingProvider
     _controllers_factory_: FloorControllersFactory

@@ -1,11 +1,11 @@
 from typing import Dict, Any
 
-from .. import ModelConfiguration, ModelConfigurableObject, ModelLiveObject
+from .. import ModelConfiguration, ModelPreConfigurableObject, ModelLiveObject
 from .. import Passenger
 from . import Floors, LiftCabin, FloorsFactory, LiftCabinsFactory
 
 
-class Building(ModelConfigurableObject, ModelLiveObject):
+class Building(ModelPreConfigurableObject, ModelLiveObject):
 
     floors: Floors = None
     lifts: Dict[Any, LiftCabin] = None

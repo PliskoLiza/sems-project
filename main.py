@@ -1,18 +1,7 @@
-from typing import Iterable, Any
+from typing import Iterable
 
 import pylvtmod.helpers
 import pylvtmod as md
-
-
-class CustomController(md.CallReceiver, md.RequestReceiver):
-
-    lifts = None
-
-    def push_call(self, call: md.Call):
-        pass
-
-    def push_request(self, request: md.Request):
-        pass
 
 
 class CustomTicketsFactory(md.TicketsFactory):
@@ -20,25 +9,30 @@ class CustomTicketsFactory(md.TicketsFactory):
         pass
 
 
-class CustomFlaggingProvider(md.FlaggingProvider):
-
-    def get_all_flags(self) -> Iterable[Any]:
-        return ['up', 'dn']
-
-    def get_flag_for(self, ticket: md.Ticket) -> Any:
-        return 'up' if ticket.destination_floor > ticket.departure_floor else 'dn'
+class CustomController(md.helpers.LiveLiftController):
+    def tick(self, time):
+        pass
 
 
-config = md.helpers.SimpleModelConfigurator(
-    floors_count=9,
-    floors_height=300,
-    cabins_count=1,
-    cabin_speed=10,
-    cabin_capacity=5,
-    universal_receiver=CustomController(),
-    tickets_factory=CustomTicketsFactory(),
-    flagging_provider=CustomFlaggingProvider()
+def main(duration: int):
+    controller = CustomController()
+    config = md.helpers.SimpleModelConfigurator(
+        floors_count=9,
+        floors_height=300,
+        cabins_count=1,
+        cabin_speed=10,
+        cabin_capacity=5,
+        universal_receiver=CustomController(),
+        tickets_factory=CustomTicketsFactory(),
+        flagging_provider=md.helpers.UpDownFlaggingProvider()
     ).build_configuration()
 
-model = md.Model(configuration=config)
-pass
+    model = md.Model(configuration=config)
+    controller.setup(model)
+
+    model.run(lambda env: env.time() < duration)
+    pass
+
+
+if __name__ == '__main__':
+    main(3600)
