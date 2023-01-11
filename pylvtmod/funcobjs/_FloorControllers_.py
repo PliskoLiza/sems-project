@@ -1,4 +1,4 @@
-from typing import Dict, Any, Iterable
+from typing import Dict, Any, Iterable, Sequence
 
 from . import FloorController
 
@@ -16,8 +16,14 @@ class FloorControllers:
     def state_exists(self, state) -> bool:
         return any(map(lambda controller: controller.state == state, self._controllers_.values()))
 
+    def any_state_exists(self, states) -> bool:
+        return any(map(lambda controller: controller.state in states, self._controllers_.values()))
+
     def with_state(self, state) -> Iterable[FloorController]:
         return filter(lambda controller: controller.state == state, self._controllers_.values())
+
+    def with_states(self, state) -> Iterable[FloorController]:
+        return filter(lambda controller: controller.state in state, self._controllers_.values())
 
     def __init__(self, controllers: Dict[Any, FloorController]):
         self._controllers_ = controllers
@@ -25,11 +31,11 @@ class FloorControllers:
     def get(self, controller_id):
         return self._controllers_[controller_id]
 
-    def drop(self, *, state=None, controller_id=None):
+    def drop(self, *, state=None, states: Sequence = None, controller_id=None):
         if controller_id is not None:
             self._controllers_[controller_id].drop_state()
         else:
-            for controller in self.with_state(state):
+            for controller in (self.with_states(states) if state is not None else self.with_state(state)):
                 controller.drop_state()
 
     def state_of(self, controller_id):

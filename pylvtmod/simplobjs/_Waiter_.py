@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from . import Passenger
 
 
@@ -17,3 +19,9 @@ class Waiter:
         self.registered = False
         self.passenger = passenger
         self.flag = flag
+
+    def has_flag(self, flag):
+        return self.flag == flag
+
+    def has_flag_in(self, flags: Sequence):
+        return self.flag in flags

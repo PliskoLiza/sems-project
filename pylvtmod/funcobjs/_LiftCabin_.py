@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from llist import dllist
 
 from .. import ModelLiveObject
@@ -43,14 +45,14 @@ class LiftCabin(ModelLiveObject):
         self.passnumber = 0
         self.passengers = dllist()
 
-    def make_exchange(self, time, *, flag, caller_id=None):
+    def make_exchange(self, time, *, flags: Sequence, caller_id=None):
         self.unload(time)
-        destinations = self.load(time, flag=flag, caller_id=caller_id)
+        destinations = self.load(time, flags=flags, caller_id=caller_id)
         self.receiver.push_request(Request(sender_id=self.cabin_id, destinations=destinations))
 
-    def load(self, time, *, flag, caller_id):
+    def load(self, time, *, flags: Sequence, caller_id):
         maximum_count = self.specific.capacity - self.passnumber
-        passengers = self.floors[self.position.floor].pickup_passengers(flag, maximum_count, caller_id=caller_id)
+        passengers = self.floors[self.position.floor].pickup_passengers(flags, maximum_count, caller_id=caller_id)
         destinations = set()
         for passenger in passengers:
             passenger.try_update_state(time, PassengerStates.MOVING_IN_CABIN)
@@ -78,7 +80,7 @@ class LiftCabin(ModelLiveObject):
     def execute(self, time, command: Command):
         if self.move(command.target_floor):
             if command.exchange_needed:
-                self.make_exchange(time, flag=command.exchange_flag, caller_id=command.call_sender_id)
+                self.make_exchange(time, flags=command.exchange_flags, caller_id=command.call_sender_id)
             return True
         return False
 
