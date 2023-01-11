@@ -7,7 +7,9 @@ from .. import *
 
 
 class LiveLiftController(CallReceiver, RequestReceiver, ModelLiveObject, ModelPostConfigurableObject):
+
     lifts: Dict[Any, LiftCabin] = None
+    flagging_provider: FlaggingProvider = None
 
     calls: dllist = None
     requests: dllist = None
@@ -18,6 +20,7 @@ class LiveLiftController(CallReceiver, RequestReceiver, ModelLiveObject, ModelPo
 
     def setup(self, model: Model):
         self.lifts = model.building.lifts
+        self.flagging_provider = model.configuration.flagging_provider
         model.tick_actions.append(self)
 
     def push_call(self, call: Call):

@@ -7,6 +7,8 @@ from . import Building, PassengersFactory
 
 class Model(ModelLiveObject, ModelPreConfigurableObject):
 
+    configuration: ModelConfiguration = None
+
     building: Building = None
 
     time_counter: TimeCounter = None
@@ -20,6 +22,7 @@ class Model(ModelLiveObject, ModelPreConfigurableObject):
         self.tick_actions = [self.spawn_passengers, self.building]
 
     def configure(self, configuration: ModelConfiguration):
+        self.configuration = configuration
         self.building = Building(configuration=configuration)
         self.passengers_factory = PassengersFactory(configuration=configuration)
         self.time_counter = configuration.time_counter
