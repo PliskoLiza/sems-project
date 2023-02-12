@@ -3,7 +3,7 @@ from abc import abstractmethod
 
 from llist import dllist
 
-from .. import *
+from pylvtmod import *
 
 
 class LiveLiftController(CallReceiver, RequestReceiver, ModelLiveObject, ModelPostConfigurableObject):

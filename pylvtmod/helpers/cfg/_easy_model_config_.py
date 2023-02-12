@@ -1,16 +1,52 @@
 from typing import Dict, Any, Iterable, List, Collection
 
-from .. import *
+from pylvtmod import *
 
 
-class SimpleModelConfigurator(FloorPlansFactory,
-                              CallReceiversFactory,
-                              RequestReceiversFactory,
-                              LiftCabinPositionsFactory,
-                              LiftCabinSpecificsFactory):
+def build_config(*,
+                 floors_count: int,
+                 floors_height: float,
+                 first_floor_number: int = 1,
+
+                 cabin_speed: float,
+                 cabin_capacity: int,
+
+                 cabins_count: int = None,
+                 cabins_starts: Collection[LiftCabinPosition] = None,
+                 cabins_start_floor: int = 1,
+
+                 universal_receiver=None,
+                 call_receiver: CallReceiver = None,
+                 request_receiver: RequestReceiver = None,
+
+                 tickets_factory: TicketsFactory = None,
+                 flagging_provider: FlaggingProvider = None,
+
+                 **additional_params):
+
+    return _ConfigurationBuilder(floors_count=floors_count,
+                                 floors_height=floors_height,
+                                 first_floor_number=first_floor_number,
+                                 cabin_speed=cabin_speed,
+                                 cabin_capacity=cabin_capacity,
+                                 cabins_count=cabins_count,
+                                 cabins_starts=cabins_starts,
+                                 cabins_start_floor=cabins_start_floor,
+                                 universal_receiver=universal_receiver,
+                                 call_receiver=call_receiver,
+                                 request_receiver=request_receiver,
+                                 tickets_factory=tickets_factory,
+                                 flagging_provider=flagging_provider).build_configuration(**additional_params)
+
+
+class _ConfigurationBuilder(FloorPlansFactory,
+                            CallReceiversFactory,
+                            RequestReceiversFactory,
+                            LiftCabinPositionsFactory,
+                            LiftCabinSpecificsFactory):
 
     floors_count: int = None
-    floors_height: int = None
+    floors_height: float = None
     first_floor_number: int = None
 
     cabin_speed: float = None
@@ -89,8 +125,8 @@ class SimpleModelConfigurator(FloorPlansFactory,
 
     def get_cabins_positions(self) -> Dict[Any, LiftCabinPosition]:
         return self.cabins_starts if self.cabins_starts is not None \
-               else {cabin_id: LiftCabinPosition(floor=self.cabins_start_floor)
-                     for cabin_id in range(0, self.cabins_count)}
+            else {cabin_id: LiftCabinPosition(floor=self.cabins_start_floor)
+                  for cabin_id in range(0, self.cabins_count)}
 
     def get_cabins_specifics(self) -> Dict[Any, LiftCabinSpecific]:
         return {cabin_id: LiftCabinSpecific(speed=self.cabin_speed, capacity=self.cabin_capacity)

@@ -1,6 +1,6 @@
 from typing import Iterable, Any
 
-from .. import *
+from pylvtmod import *
 
 
 class UpDownFlaggingProvider(FlaggingProvider):
