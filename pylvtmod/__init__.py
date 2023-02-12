@@ -1,6 +1,9 @@
 from .simplobjs import *
 from .simplices import *
 
+from .statices import *
+from .statobjs import *
+
 from .funcices import *
 
 from ._ModelLiveObject_ import ModelLiveObject

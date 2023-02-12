@@ -22,28 +22,38 @@ def build_config(*,
                  tickets_factory: TicketsFactory = None,
                  flagging_provider: FlaggingProvider = None,
 
+                 passengers_data_collector: PassengersDataCollector = None,
+
                  **additional_params):
 
-    return _ConfigurationBuilder(floors_count=floors_count,
-                                 floors_height=floors_height,
-                                 first_floor_number=first_floor_number,
-                                 cabin_speed=cabin_speed,
-                                 cabin_capacity=cabin_capacity,
-                                 cabins_count=cabins_count,
-                                 cabins_starts=cabins_starts,
-                                 cabins_start_floor=cabins_start_floor,
-                                 universal_receiver=universal_receiver,
-                                 call_receiver=call_receiver,
-                                 request_receiver=request_receiver,
-                                 tickets_factory=tickets_factory,
-                                 flagging_provider=flagging_provider).build_configuration(**additional_params)
+    factory = _UniversalFactory(floors_count=floors_count,
+                                floors_height=floors_height,
+                                first_floor_number=first_floor_number,
+                                cabin_speed=cabin_speed,
+                                cabin_capacity=cabin_capacity,
+                                cabins_count=cabins_count,
+                                cabins_starts=cabins_starts,
+                                cabins_start_floor=cabins_start_floor,
+                                universal_receiver=universal_receiver,
+                                call_receiver=call_receiver,
+                                request_receiver=request_receiver)
+
+    return ModelConfiguration(tickets_factory=tickets_factory,
+                              flagging_provider=flagging_provider,
+                              passengers_data_collector=passengers_data_collector,
+                              floor_plans_factory=factory,
+                              call_receivers_factory=factory,
+                              request_receivers_factory=factory,
+                              lift_cabin_positions_factory=factory,
+                              lift_cabin_specifics_factory=factory,
+                              **additional_params)
 
 
-class _ConfigurationBuilder(FloorPlansFactory,
-                            CallReceiversFactory,
-                            RequestReceiversFactory,
-                            LiftCabinPositionsFactory,
-                            LiftCabinSpecificsFactory):
+class _UniversalFactory(FloorPlansFactory,
+                        CallReceiversFactory,
+                        RequestReceiversFactory,
+                        LiftCabinPositionsFactory,
+                        LiftCabinSpecificsFactory):
 
     floors_count: int = None
     floors_height: float = None
@@ -62,6 +72,8 @@ class _ConfigurationBuilder(FloorPlansFactory,
     tickets_factory: TicketsFactory = None
     flagging_provider: FlaggingProvider = None
 
+    passengers_data_collector: PassengersDataCollector = None
+
     def __init__(self, *,
                  floors_count: int,
                  floors_height: float,
@@ -76,10 +88,7 @@ class _ConfigurationBuilder(FloorPlansFactory,
 
                  universal_receiver=None,
                  call_receiver: CallReceiver = None,
-                 request_receiver: RequestReceiver = None,
-
-                 tickets_factory: TicketsFactory = None,
-                 flagging_provider: FlaggingProvider = None):
+                 request_receiver: RequestReceiver = None):
 
         self.floors_count = floors_count
         self.floors_height = floors_height
@@ -95,12 +104,10 @@ class _ConfigurationBuilder(FloorPlansFactory,
         self.call_receiver = universal_receiver if universal_receiver is not None else call_receiver
         self.request_receiver = universal_receiver if universal_receiver is not None else request_receiver
 
-        self.tickets_factory = tickets_factory
-        self.flagging_provider = flagging_provider
-
     def build_configuration(self, **kwargs) -> ModelConfiguration:
         return ModelConfiguration(tickets_factory=self.tickets_factory,
                                   flagging_provider=self.flagging_provider,
+                                  passengers_data_collector=self.passengers_data_collector,
                                   floor_plans_factory=self,
                                   call_receivers_factory=self,
                                   request_receivers_factory=self,

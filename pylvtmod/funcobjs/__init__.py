@@ -1,4 +1,4 @@
-from ._PassengerFactory_ import PassengersFactory
+from ._PassengersFactory_ import PassengersFactory
 from ._FloorController_ import FloorController
 from ._FloorControllers_ import FloorControllers
 from ._FloorControllersFactory_ import FloorControllersFactory

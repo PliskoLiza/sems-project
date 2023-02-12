@@ -1,5 +1,5 @@
 import pylvtmod as md
-import pylvtmod.helpers
+import pylvtmod.helpers as hlp
 
 
 def main(duration: int):
