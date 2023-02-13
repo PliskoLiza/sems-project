@@ -1,13 +1,37 @@
+import os
+
 import pylvtmod as md
-import pylvtmod.helpers as hlp
+from pylvtmod.helpers.cfg import build_config, setup_model
+from pylvtmod.helpers.obj import UpDownFlaggingProvider, ModelStateDisplay
+
+from spawners.SimpleSpawner import SimpleSpawner
+from controllers.DumpController import DumpController
 
 
-def main(duration: int):
-    pass
+DURATION = 180
+
+DISPLAY_DELAY = 180
+
+CONFIG = build_config(
+
+    floors_count=5,
+    floors_height=3,
+    first_floor_number=1,
+
+    cabins_count=2,
+    cabin_speed=0.1,
+    cabin_capacity=4,
+    cabins_start_floor=1,
+
+    universal_receiver=DumpController(),
+    tickets_factory=SimpleSpawner(),
+    flagging_provider=UpDownFlaggingProvider()
+)
 
 
 if __name__ == '__main__':
 
-    print(dir(md.ModelConfiguration))
+    model = md.Model(configuration=CONFIG)
+    setup_model(model, ModelStateDisplay(delay=DISPLAY_DELAY))
 
-    main(3600)
+    model.run(condition=lambda m: m.time() < DURATION)

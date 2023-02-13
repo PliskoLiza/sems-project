@@ -34,7 +34,7 @@ class Passenger:
 
     def __str__(self):
         state = self.state()
-        return f"<Passenger #{self.passenger_id}: {state[0]} since {state[1]}>"
+        return f"<Passenger #{self.passenger_id}: {self.ticket}, {state[0]} since {state[1]}>"
 
     def __repr__(self):
         return self.__str__()

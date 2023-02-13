@@ -28,6 +28,18 @@ class FloorControllers:
     def __init__(self, controllers: Dict[Any, FloorController]):
         self._controllers_ = controllers
 
+    def __iter__(self):
+        return iter(self._controllers_.values())
+
+    def __len__(self):
+        return len(self._controllers_)
+
+    def count(self):
+        return len(self._controllers_)
+
+    def __getitem__(self, item):
+        return self._controllers_[item]
+
     def get(self, controller_id):
         return self._controllers_[controller_id]
 

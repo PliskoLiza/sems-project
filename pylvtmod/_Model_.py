@@ -28,7 +28,7 @@ class Model(ModelLiveObject, ModelPreConfigurableObject):
         self.time_counter = configuration.time_counter
         self.tickets_factory = configuration.tickets_factory
 
-    def run(self, condition) -> Iterable:
+    def run(self, condition):
         while condition(self):
             self.run_tick()
 

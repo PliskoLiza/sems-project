@@ -7,7 +7,7 @@ from . import Floor, Floors, LiftCabin
 
 class LiftCabinsFactory(ModelPreConfigurableObject):
 
-    _floors_: Dict[int, Floor] = None
+    _floors_: Floors = None
 
     _request_receivers_factory_: RequestReceiversFactory = None
 

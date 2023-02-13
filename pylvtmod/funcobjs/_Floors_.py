@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterable
 
 from . import Floor
 
@@ -12,8 +12,11 @@ class Floors:
         self.start_number = start_number
         self._floors_ = floors
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[Floor]:
         return iter(self._floors_)
+
+    def reversed(self) -> Iterable[Floor]:
+        return reversed(self._floors_)
 
     def __getitem__(self, item):
         if type(item) is int:
