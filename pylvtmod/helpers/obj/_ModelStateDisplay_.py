@@ -40,7 +40,8 @@ class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
             "parameters",
             tabulate(
                 [
-                    [self._model_.time(), "Model time"]
+                    [self._model_.time(), "Model time"],
+                    [self._model_.ticks(), "Ticks from start"]
                 ],
                 colalign=['right', 'left'],
                 tablefmt='plain'))
@@ -75,10 +76,10 @@ class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
                     [
                         cabin.cabin_id,
                         cabin.position.floor,
-                        False,
-                        '-' if cabin.commands.first is None else
-                        f"[ → #{cabin.commands.first.target_floor}"
-                        f"{' / E' if cabin.commands.first.exchange_needed else ''}]",
+                        cabin.blocked(),
+                        '-' if cabin.active_command() is None else
+                        f"[ → #{cabin.active_command().target_floor}"
+                        f"{' / E' if cabin.active_command().exchange_needed else ''}]",
                         ' '.join(f"[ #{floor} ← "
                                  f"{', '.join(map(lambda passenger: f'#{passenger.passenger_id}', passengers))} ]"
                                  for floor, passengers

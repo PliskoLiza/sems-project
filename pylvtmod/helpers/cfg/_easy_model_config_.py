@@ -11,6 +11,10 @@ def build_config(*,
                  cabin_speed: float,
                  cabin_capacity: int,
 
+                 cabins_load_ticks: int = None,
+                 cabins_unload_ticks: int = None,
+                 cabins_exchange_ticks: int = None,
+
                  cabins_count: int = None,
                  cabins_starts: Collection[LiftCabinPosition] = None,
                  cabins_start_floor: int = 1,
@@ -32,6 +36,9 @@ def build_config(*,
                                 cabin_speed=cabin_speed,
                                 cabin_capacity=cabin_capacity,
                                 cabins_count=cabins_count,
+                                cabins_load_ticks=cabins_load_ticks,
+                                cabins_unload_ticks=cabins_unload_ticks,
+                                cabins_exchange_ticks=cabins_exchange_ticks,
                                 cabins_starts=cabins_starts,
                                 cabins_start_floor=cabins_start_floor,
                                 universal_receiver=universal_receiver,
@@ -62,6 +69,9 @@ class _UniversalFactory(FloorPlansFactory,
     cabin_speed: float = None
     cabin_capacity: int = None
 
+    cabins_load_ticks: int = None
+    cabins_unload_ticks: int = None
+
     cabins_count: int = None
     cabins_starts: Collection[LiftCabinPosition] = None
     cabins_start_floor: int = None
@@ -82,6 +92,10 @@ class _UniversalFactory(FloorPlansFactory,
                  cabin_speed: float,
                  cabin_capacity: int,
 
+                 cabins_load_ticks: int = None,
+                 cabins_unload_ticks: int = None,
+                 cabins_exchange_ticks: int = None,
+
                  cabins_count: int = None,
                  cabins_starts: Collection[LiftCabinPosition] = None,
                  cabins_start_floor: int = 1,
@@ -96,6 +110,9 @@ class _UniversalFactory(FloorPlansFactory,
 
         self.cabin_speed = cabin_speed
         self.cabin_capacity = cabin_capacity
+
+        self.cabins_load_ticks = cabins_load_ticks if cabins_load_ticks is not None else cabins_exchange_ticks
+        self.cabins_unload_ticks = cabins_unload_ticks if cabins_unload_ticks is not None else cabins_exchange_ticks
 
         self.cabins_count = cabins_count if cabins_count is not None else len(cabins_starts)
         self.cabins_starts = cabins_starts
@@ -136,5 +153,8 @@ class _UniversalFactory(FloorPlansFactory,
                   for cabin_id in range(0, self.cabins_count)}
 
     def get_cabins_specifics(self) -> Dict[Any, LiftCabinSpecific]:
-        return {cabin_id: LiftCabinSpecific(speed=self.cabin_speed, capacity=self.cabin_capacity)
+        return {cabin_id: LiftCabinSpecific(speed=self.cabin_speed,
+                                            capacity=self.cabin_capacity,
+                                            load_ticks=self.cabins_load_ticks,
+                                            unload_ticks=self.cabins_unload_ticks)
                 for cabin_id in range(0, self.cabins_count)}

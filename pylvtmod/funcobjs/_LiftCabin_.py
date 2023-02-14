@@ -24,13 +24,22 @@ class LiftCabin(ModelLiveObject):
     commands: dllist = None
     receiver: RequestReceiver = None
 
+    def active_command(self) -> Command:
+        node = self.commands.first
+        return node.value if node is not None else None
+
     passnumber: int = None
     passengers: dllist = None
 
     block_ticks: int = None
 
-    def blocked(self):
-        return self.block_ticks is not None
+    def blocked(self) -> bool:
+        return self.block_ticks > 0
+
+    def tick_block(self) -> bool:
+        if self.block_ticks > 0:
+            self.block_ticks -= 1
+        return self.block_ticks == 0
 
     def __init__(self, cabin_id, *,
                  specific: LiftCabinSpecific,
@@ -50,6 +59,8 @@ class LiftCabin(ModelLiveObject):
         self.passnumber = 0
         self.passengers = dllist()
 
+        self.block_ticks = 0
+
     def make_exchange(self, time, *, flags: Sequence, caller_id=None):
         self.unload(time)
         destinations = self.load(time, flags=flags, caller_id=caller_id)
@@ -63,6 +74,7 @@ class LiftCabin(ModelLiveObject):
             passenger.try_update_state(time, PassengerStates.MOVING_IN_CABIN)
             destinations.add(passenger.ticket.destination_floor)
             self.passengers.append(passenger)
+            self.block_ticks += self.specific.load_ticks
             self.passnumber += 1
         return destinations
 
@@ -73,14 +85,16 @@ class LiftCabin(ModelLiveObject):
             if current.value.ticket.destination_floor == self.position.floor:
                 passenger = self.passengers.remove(current)
                 passenger.try_update_state(time, PassengerStates.ARRIVED)
+                self.block_ticks += self.specific.unload_ticks
                 self.passnumber -= 1
             current = nxt
 
     def tick(self, time, ticks):
-        command = self.commands.first
-        if command is not None:
-            if self.execute(time, command.value):
-                self.commands.remove(command)
+        if self.tick_block():
+            command = self.commands.first
+            if command is not None:
+                if self.execute(time, command.value):
+                    self.commands.remove(command)
 
     def execute(self, time, command: Command):
         if self.move(command.target_floor):

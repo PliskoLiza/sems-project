@@ -18,10 +18,11 @@ CONFIG = build_config(
     floors_height=3,
     first_floor_number=1,
 
-    cabins_count=2,
+    cabins_count=1,
     cabin_speed=0.1,
     cabin_capacity=4,
     cabins_start_floor=1,
+    cabins_exchange_ticks=5,
 
     universal_receiver=DumpController(),
     tickets_factory=SimpleSpawner(),
