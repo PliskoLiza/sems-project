@@ -11,3 +11,11 @@ class TimeCounter:
     @abstractmethod
     def tick(self) -> Any:
         pass
+
+    @abstractmethod
+    def ticks2interval(self, ticks):
+        pass
+
+    @abstractmethod
+    def interval2ticks(self, interval):
+        pass

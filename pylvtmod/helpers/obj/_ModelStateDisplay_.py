@@ -18,7 +18,7 @@ class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
         else:
             self._delay_condition_ = lambda time: time % delay == 0
 
-    def tick(self, time):
+    def tick(self, time, ticks):
         if self._delay_condition_(time):
             clrscr()
             self.display_state()

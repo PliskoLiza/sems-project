@@ -11,6 +11,8 @@ class Model(ModelLiveObject, ModelPreConfigurableObject):
 
     building: Building = None
 
+    _ticks_from_start_: int = None
+
     time_counter: TimeCounter = None
     tick_actions: List[Union[Callable, ModelLiveObject]] = None
 
@@ -20,6 +22,7 @@ class Model(ModelLiveObject, ModelPreConfigurableObject):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tick_actions = [self.spawn_passengers, self.building]
+        self._ticks_from_start_ = 0
 
     def configure(self, configuration: ModelConfiguration):
         self.configuration = configuration
@@ -35,17 +38,21 @@ class Model(ModelLiveObject, ModelPreConfigurableObject):
     def time(self):
         return self.time_counter.current()
 
+    def ticks(self):
+        return self._ticks_from_start_
+
     def run_tick(self):
         self.time_counter.tick()
-        self.tick(self.time())
+        self._ticks_from_start_ += 1
+        self.tick(self.time(), self.ticks())
 
-    def tick(self, time):
+    def tick(self, time, ticks):
         for action in self.tick_actions:
             if isinstance(action, ModelLiveObject):
-                action.tick(time)
+                action.tick(time, ticks)
             else:
-                action(time)
+                action(time, ticks)
 
-    def spawn_passengers(self, time):
-        for ticket in self.tickets_factory.generate_tickets(time):
+    def spawn_passengers(self, time, ticks):
+        for ticket in self.tickets_factory.generate_tickets(time, ticks):
             self.building.push_passenger(self.time(), self.passengers_factory.spawn_passenger(ticket))

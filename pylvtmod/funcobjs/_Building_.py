@@ -20,6 +20,6 @@ class Building(ModelPreConfigurableObject, ModelLiveObject):
     def push_passenger(self, time, passenger: Passenger):
         self.floors[passenger.ticket.departure_floor].push_passenger(time, passenger)
 
-    def tick(self, time):
+    def tick(self, time, ticks):
         for lift in self.lifts.values():
-            lift.tick(time)
+            lift.tick(time, ticks)

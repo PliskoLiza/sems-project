@@ -30,5 +30,5 @@ class LiveLiftController(CallReceiver, RequestReceiver, ModelLiveObject, ModelPo
         self.requests.append(request)
 
     @abstractmethod
-    def tick(self, time):
+    def tick(self, time, ticks):
         pass

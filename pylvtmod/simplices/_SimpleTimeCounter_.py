@@ -16,3 +16,9 @@ class SimpleTimeCounter(TimeCounter):
     def tick(self) -> Any:
         self._time_ += 1
         return self._time_
+
+    def ticks2interval(self, ticks):
+        return ticks
+
+    def interval2ticks(self, interval):
+        return interval

@@ -27,6 +27,11 @@ class LiftCabin(ModelLiveObject):
     passnumber: int = None
     passengers: dllist = None
 
+    block_ticks: int = None
+
+    def blocked(self):
+        return self.block_ticks is not None
+
     def __init__(self, cabin_id, *,
                  specific: LiftCabinSpecific,
                  position: LiftCabinPosition,
@@ -71,7 +76,7 @@ class LiftCabin(ModelLiveObject):
                 self.passnumber -= 1
             current = nxt
 
-    def tick(self, time):
+    def tick(self, time, ticks):
         command = self.commands.first
         if command is not None:
             if self.execute(time, command.value):
