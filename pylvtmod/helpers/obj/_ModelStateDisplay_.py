@@ -1,6 +1,7 @@
 from tabulate import tabulate, SEPARATING_LINE
 from itertools import groupby
 from clrscr import clrscr
+from time import sleep
 
 from pylvtmod import *
 
@@ -8,20 +9,25 @@ from pylvtmod import *
 class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
 
     _model_: Model = None
-    _delay_condition_ = None
+    _interval_condition_ = None
+    _display_delay_: float = None
 
-    def __init__(self, *, delay: int = None, delay_condition = None):
-        if delay_condition is not None:
-            self._delay_condition_ = delay_condition
-        elif delay is None:
-            self._delay_condition_ = lambda _: True
+    def __init__(self, *, interval_ticks: int = None, interval_condition=None, display_delay: float = None):
+
+        self._display_delay_ = display_delay
+
+        if interval_condition is not None:
+            self._interval_condition_ = interval_condition
+        elif interval_ticks is None:
+            self._interval_condition_ = lambda _, __: True
         else:
-            self._delay_condition_ = lambda time: time % delay == 0
+            self._interval_condition_ = lambda _, ticks: ticks % interval_ticks == 0
 
     def tick(self, time, ticks):
-        if self._delay_condition_(time):
+        if self._interval_condition_(time, ticks):
             clrscr()
             self.display_state()
+            self._delay()
 
     def setup(self, model: Model):
         self._model_ = model
@@ -29,6 +35,10 @@ class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
         self._max_num_len_ = len(str(model.building.floors.count()))
 
     _max_num_len_: int = None
+
+    def _delay(self):
+        if self._display_delay_ is not None:
+            sleep(self._display_delay_)
 
     def display_state(self):
         self._display_parameters()
@@ -79,7 +89,8 @@ class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
                         cabin.blocked(),
                         '-' if cabin.active_command() is None else
                         f"[ → #{cabin.active_command().target_floor}"
-                        f"{' / E' if cabin.active_command().exchange_needed else ''}]",
+                        f"{f' / E' if cabin.active_command().exchange_needed else ''} ]",
+                        f"{cabin.passnumber} / {cabin.specific.capacity}",
                         ' '.join(f"[ #{floor} ← "
                                  f"{', '.join(map(lambda passenger: f'#{passenger.passenger_id}', passengers))} ]"
                                  for floor, passengers
@@ -87,8 +98,8 @@ class ModelStateDisplay(ModelPostConfigurableObject, ModelLiveObject):
                      ]
                     for cabin in self._model_.building.lifts.values()
                 ],
-                headers=["Cabin", "Floor", "Blocked", "Command", "Passengers"],
-                colalign=['center', 'center', "center", 'center', 'left'],
+                headers=["Cabin", "Floor", "Blocked", "Command", "Filling", "Passengers"],
+                colalign=['center', 'center', "center", 'center', 'center',  'left'],
                 tablefmt='plain'))
 
     @staticmethod

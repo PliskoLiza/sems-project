@@ -13,7 +13,10 @@ class SimpleSpawner(md.TicketsFactory, md.ModelPostConfigurableObject):
         self._floors_count_ = model.building.floors.count()
 
     def generate_tickets(self, time, ticks) -> Iterable[Ticket]:
-        if time % 60 == 0:
+        if time % 180 == 0:
             return [md.Ticket(departure=1, destination=rnd.randint(2, self._floors_count_))]
+
+        if time % 600 == 0:
+            return [md.Ticket(departure=rnd.randint(2, self._floors_count_), destination=1)]
 
         return []

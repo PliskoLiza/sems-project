@@ -45,7 +45,8 @@ class Floor:
             while counter < maximum_count and current is not None:
                 nxt = current.next
                 if current.value.has_flag_in(flags):
-                    yield self.queue.remove(current)
+                    waiter = self.queue.remove(current)
+                    yield waiter.passenger
                     counter += 1
                 current = nxt
             self.controllers.drop(states=flags, controller_id=caller_id)

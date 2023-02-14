@@ -1,3 +1,4 @@
 from ._ModelStateDisplay_ import ModelStateDisplay
 from ._LiveLiftController_ import LiveLiftController
+from ._SimpleFlaggingProvider_ import SimpleFlaggingProvider
 from ._UpDownFlaggingProvider_ import UpDownFlaggingProvider

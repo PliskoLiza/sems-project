@@ -28,6 +28,9 @@ class LiftCabin(ModelLiveObject):
         node = self.commands.first
         return node.value if node is not None else None
 
+    def push_command(self, command: Command):
+        self.commands.appendright(command)
+
     passnumber: int = None
     passengers: dllist = None
 
