@@ -1,5 +1,8 @@
 # Ignore JetBrains IDE's project files
 .idea/*
 
+# Ignore files in output directory
+.output/*
+
 # Ignore Python pre-compiled files
 *.pyc

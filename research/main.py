@@ -1,6 +1,6 @@
 import pylvtmod as md
-from pylvtmod.helpers.cfg import build_config, setup_model
-from pylvtmod.helpers.obj import SimpleFlaggingProvider, ModelStateDisplay
+from pylvthelp import build_config, setup_model
+from pylvthelp import SimpleFlaggingProvider, ModelStateDisplay
 
 from spawners.SimpleSpawner import SimpleSpawner
 from controllers.DumpController import DumpController

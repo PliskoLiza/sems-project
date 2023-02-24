@@ -1,8 +1,8 @@
 import pylvtmod as md
-import pylvtmod.helpers.obj as mdpt
+import pylvthelp as hp
 
 
-class DumpController(mdpt.LiveLiftController):
+class DumpController(hp.LiveLiftController):
     def tick(self, time, ticks):
         while self.has_requests():
             request: md.Request = self.pop_request()
