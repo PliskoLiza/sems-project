@@ -39,7 +39,10 @@ CONFIG = build_config(
     cabins_exchange_ticks=5,
 
     universal_receiver=CONTROLLER,
-    tickets_factory=SimpleSpawner(),
+    tickets_factory=SimpleSpawner(cutoff=DURATION - 600,
+                                  up_interval=180, down_interval=600,
+                                  up_random=60, down_random=120,
+                                  up_group_max=2, down_group_max=1),
     flagging_provider=SimpleFlaggingProvider(),
 
     passengers_data_collector=STATS_PROVIDER
