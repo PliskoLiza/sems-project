@@ -1,6 +1,9 @@
 import pylvtmod as md
+
 from pylvthelp import build_config, setup_model
-from pylvthelp import SimpleFlaggingProvider, ModelStateDisplay
+from pylvthelp import BasicPassengersStatsProvider
+from pylvthelp import SimpleFlaggingProvider, ConsoleModelStateDisplay
+from pylvthelp import ModelParametersInfoSupplier, DefaultCabinsInfoSupplier
 
 from spawners.SimpleSpawner import SimpleSpawner
 from controllers.DumpController import DumpController
@@ -8,8 +11,18 @@ from controllers.DumpController import DumpController
 
 DURATION = 10800
 
+STATS_PROVIDER = BasicPassengersStatsProvider()
+
 DISPLAY_DELAY = 1
 DISPLAY_INTERVAL = 30
+DISPLAY_PROVIDER = ConsoleModelStateDisplay(
+    [
+        ModelParametersInfoSupplier(),
+        STATS_PROVIDER,
+        ConsoleModelStateDisplay.BUILDING_SHOW,
+        DefaultCabinsInfoSupplier(),
+    ],
+    interval_ticks=DISPLAY_INTERVAL, display_delay=DISPLAY_DELAY)
 
 CONTROLLER = DumpController()
 
@@ -27,13 +40,19 @@ CONFIG = build_config(
 
     universal_receiver=CONTROLLER,
     tickets_factory=SimpleSpawner(),
-    flagging_provider=SimpleFlaggingProvider()
+    flagging_provider=SimpleFlaggingProvider(),
+
+    passengers_data_collector=STATS_PROVIDER
 )
 
 
-if __name__ == '__main__':
+def main():
 
     model = md.Model(configuration=CONFIG)
-    setup_model(model, CONTROLLER, ModelStateDisplay(interval_ticks=DISPLAY_INTERVAL, display_delay=DISPLAY_DELAY))
+    setup_model(model, CONTROLLER, DISPLAY_PROVIDER)
 
     model.run(condition=lambda m: m.time() < DURATION)
+
+
+if __name__ == '__main__':
+    main()

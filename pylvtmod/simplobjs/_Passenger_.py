@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Union, Dict, Tuple
 
 from . import PassengerStates, Ticket
 
@@ -21,11 +21,21 @@ class Passenger:
         self.states = dict()
         self.ticket = ticket
 
+    def passed_states(self, *states: PassengerStates):
+        return all(map(lambda state: state in self.states.keys(), states))
+
     def try_update_state(self, time, state: PassengerStates):
         if state not in self.states:
             self.states.update({state: time})
 
-    def state(self) -> Tuple[PassengerStates, Any]:
+    def get_time_between(self, state1: PassengerStates, state2: PassengerStates) -> Any:
+        try:
+            return abs(self.states[state1] - self.states[state2])
+        except KeyError:
+            return None
+
+    @property
+    def state(self) -> Union[None, Tuple[PassengerStates, Any]]:
         try:
             state = max(self.states, key=self.states.__getitem__)
             return state, self.states[state]
@@ -33,7 +43,7 @@ class Passenger:
             return None
 
     def __str__(self):
-        state = self.state()
+        state = self.state
         return f"<Passenger #{self.passenger_id}: {self.ticket}, {state[0]} since {state[1]}>"
 
     def __repr__(self):
