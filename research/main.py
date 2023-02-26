@@ -6,7 +6,7 @@ from pylvthelp import SimpleFlaggingProvider, ConsoleModelStateDisplay
 from pylvthelp import ModelParametersInfoSupplier, DefaultCabinsInfoSupplier
 
 from spawners.SimpleSpawner import SimpleSpawner
-from controllers.DumpController import DumpController
+from controllers.C01_Sfp_V100_Dump import C01_V100_Dump_Controller
 
 
 DURATION = 10800
@@ -24,7 +24,7 @@ DISPLAY_PROVIDER = ConsoleModelStateDisplay(
     ],
     interval_ticks=DISPLAY_INTERVAL, display_delay=DISPLAY_DELAY)
 
-CONTROLLER = DumpController()
+CONTROLLER = C01_V100_Dump_Controller()
 
 CONFIG = build_config(
 

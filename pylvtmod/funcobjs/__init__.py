@@ -5,6 +5,8 @@ from ._FloorControllersFactory_ import FloorControllersFactory
 from ._Floor_ import Floor
 from ._Floors_ import Floors
 from ._FloorsFactory_ import FloorsFactory
+from ._LiftCabinStateManager_ import LiftCabinStateManager
+from ._LiftCabinCommandsManager_ import LiftCabinCommandsManager
 from ._LiftCabin_ import LiftCabin
 from ._LiftCabinsFactory_ import LiftCabinsFactory
 from ._Building_ import Building

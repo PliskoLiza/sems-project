@@ -20,10 +20,10 @@ class DefaultCabinsInfoSupplier(ModelPostConfigurableObject, ModelStateInfoSuppl
         return {cabin.cabin_id:
                     {
                         'Floor': cabin.position.floor,
-                        'Blocked': cabin.blocked(),
-                        'Command': '-' if cabin.active_command() is None else
-                                   f"[ → #{cabin.active_command().target_floor}"
-                                   f"{f' / E' if cabin.active_command().exchange_needed else ''} ]",
+                        'State': cabin.state.sign(),
+                        'Command': '-' if cabin.commands.empty() else
+                                   f"[ → #{cabin.commands.active.target_floor}"
+                                   f"{f' / E' if cabin.commands.active.exchange_needed else ''} ]",
                         'Filling': f"{cabin.passnumber} / {cabin.specific.capacity}",
                         'Passengers': ' '.join(f"[ #{floor} ← "
                                       f"{', '.join(map(lambda passenger: f'#{passenger.passenger_id}', passengers))} ]"

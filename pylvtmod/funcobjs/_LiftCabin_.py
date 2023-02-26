@@ -3,7 +3,10 @@ from typing import Sequence
 from llist import dllist
 
 from .. import ModelLiveObject
-from .. import PassengerStates, LiftCabinSpecific, LiftCabinPosition, Command, Request, RequestReceiver
+from .. import PassengerStates
+from .. import Command, Request, RequestReceiver
+from .. import LiftCabinSpecific, LiftCabinPosition, LiftCabinState
+from . import LiftCabinStateManager, LiftCabinCommandsManager
 from . import Floors
 
 
@@ -18,31 +21,16 @@ class LiftCabin(ModelLiveObject):
     def __hash__(self):
         return hash(self.cabin_id)
 
+    state: LiftCabinStateManager = None
+
     floors: Floors = None
     position: LiftCabinPosition = None
 
-    commands: dllist = None
+    commands: LiftCabinCommandsManager = None
     receiver: RequestReceiver = None
-
-    def active_command(self) -> Command:
-        node = self.commands.first
-        return node.value if node is not None else None
-
-    def push_command(self, command: Command):
-        self.commands.appendright(command)
 
     passnumber: int = None
     passengers: dllist = None
-
-    block_ticks: int = None
-
-    def blocked(self) -> bool:
-        return self.block_ticks > 0
-
-    def tick_block(self) -> bool:
-        if self.block_ticks > 0:
-            self.block_ticks -= 1
-        return self.block_ticks == 0
 
     def __init__(self, cabin_id, *,
                  specific: LiftCabinSpecific,
@@ -53,16 +41,57 @@ class LiftCabin(ModelLiveObject):
         self.cabin_id = cabin_id
         self.specific = specific
 
+        self.state = LiftCabinStateManager()
+
         self.floors = floors
         self.position = position
 
-        self.commands = dllist()
+        self.commands = LiftCabinCommandsManager()
         self.receiver = receiver
 
         self.passnumber = 0
         self.passengers = dllist()
 
-        self.block_ticks = 0
+    def tick(self, time, ticks):
+        self.state.tick(time, ticks)
+        if self.state.available() and not self.commands.empty():
+            if self.execute(time, self.commands.active):
+                self.commands.pop()
+
+    def execute(self, time, command: Command):
+        if self.move(command.target_floor):
+            if command.exchange_needed:
+                self.make_exchange(time, flags=command.exchange_flags, caller_id=command.call_sender_id)
+            self.state.try_drop()
+            return True
+        return False
+
+    def move(self, target_floor) -> bool:
+        if target_floor is None:
+            return self.position.elevation == 0
+        return self.move_up(target_floor) if self.position.floor < target_floor else self.move_down(target_floor)
+
+    def move_up(self, target_floor):
+        self.state.value = LiftCabinState.MovingUP
+        self.position.elevation += self.specific.speed
+        if self.position.elevation >= self.floors[self.position.floor].plan.height:
+            self.position.elevation -= self.floors[self.position.floor].plan.height
+            self.position.floor += 1
+            if self.position.floor == target_floor:
+                self.position.elevation = 0
+                return True
+            return False
+
+    def move_down(self, target_floor):
+        self.state.value = LiftCabinState.MovingDOWN
+        self.position.elevation -= self.specific.speed
+        if self.position.elevation <= 0:
+            if self.position.floor == target_floor:
+                self.position.elevation = 0
+                return True
+            self.position.floor -= 1
+            self.position.elevation += self.floors[self.position.floor].plan.height
+            return False
 
     def make_exchange(self, time, *, flags: Sequence, caller_id=None):
         self.unload(time)
@@ -74,10 +103,10 @@ class LiftCabin(ModelLiveObject):
         passengers = self.floors[self.position.floor].pickup_passengers(flags, maximum_count, caller_id=caller_id)
         destinations = set()
         for passenger in passengers:
-            passenger.try_update_state(time, PassengerStates.MOVING_IN_CABIN)
             destinations.add(passenger.ticket.destination_floor)
+            passenger.try_update_state(time, PassengerStates.MOVING_IN_CABIN)
+            self.state.block(LiftCabinState.UnderEXCHANGE, self.specific.load_ticks)
             self.passengers.append(passenger)
-            self.block_ticks += self.specific.load_ticks
             self.passnumber += 1
         return destinations
 
@@ -88,45 +117,6 @@ class LiftCabin(ModelLiveObject):
             if current.value.ticket.destination_floor == self.position.floor:
                 passenger = self.passengers.remove(current)
                 passenger.try_update_state(time, PassengerStates.ARRIVED)
-                self.block_ticks += self.specific.unload_ticks
+                self.state.block(LiftCabinState.UnderEXCHANGE, self.specific.unload_ticks)
                 self.passnumber -= 1
             current = nxt
-
-    def tick(self, time, ticks):
-        if self.tick_block():
-            command = self.commands.first
-            if command is not None:
-                if self.execute(time, command.value):
-                    self.commands.remove(command)
-
-    def execute(self, time, command: Command):
-        if self.move(command.target_floor):
-            if command.exchange_needed:
-                self.make_exchange(time, flags=command.exchange_flags, caller_id=command.call_sender_id)
-            return True
-        return False
-
-    def move(self, target_floor) -> bool:
-        if target_floor is None:
-            return self.position.elevation == 0
-        return self.move_up(target_floor) if self.position.floor < target_floor else self.move_down(target_floor)
-
-    def move_up(self, target_floor):
-        self.position.elevation += self.specific.speed
-        if self.position.elevation >= self.floors[self.position.floor].plan.height:
-            self.position.elevation -= self.floors[self.position.floor].plan.height
-            self.position.floor += 1
-            if self.position.floor == target_floor:
-                self.position.elevation = 0
-                return True
-            return False
-
-    def move_down(self, target_floor):
-        self.position.elevation -= self.specific.speed
-        if self.position.elevation <= 0:
-            if self.position.floor == target_floor:
-                self.position.elevation = 0
-                return True
-            self.position.floor -= 1
-            self.position.elevation += self.floors[self.position.floor].plan.height
-            return False
